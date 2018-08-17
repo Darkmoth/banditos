@@ -21,3 +21,8 @@ def reduce(df, col):
     df_new = pd.concat([df_newest,df_oldest])
     df_new = df_new.sort_values('age', ascending=False).drop(['age','age_rank'], axis=1)
     return df_new
+
+def get_quality(df_num):
+    df_min = df_num.transform(lambda x: x - x.min()).transform(lambda x: x/x.max())
+    df_quality = df_min.to_frame('Quality')
+    return df_quality
