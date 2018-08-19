@@ -1,5 +1,11 @@
 import pandas as pd
 
+def mad_function(df):
+    const_med = df.median()
+    df_med = abs(df - const_med)
+    v_mad = df_med.median()
+    return v_mad
+
 def get_load_factor(cnt):
     inflection_point = 200
     adj_cnt = min(cnt,inflection_point)
