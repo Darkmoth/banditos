@@ -1,4 +1,19 @@
 import pandas as pd
+import math
+
+def get_simple_ucb(row, centercalc):
+    div1 = 2 * math.log(row['total']) / row['count']
+    ucb = math.sqrt(div1)
+    return ucb + row[centercalc]
+
+def get_tuned_ucb(row, centercalc, spreadcalc):
+    cnt = max(row['count'],1)
+    row_total = max(row['total'],1)
+    div1 = 2 * math.log(row_total) / cnt
+    min1 = min(0.25, row[spreadcalc] + div1)
+    div2 = math.log(row_total) / cnt
+    ucb = math.sqrt(div2 * min1)
+    return ucb + row[centercalc]
 
 def mad_function(df):
     const_med = df.median()
