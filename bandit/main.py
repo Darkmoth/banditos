@@ -44,6 +44,11 @@ def reduce(df, col):
     return df_new
 
 def get_quality(df_num):
+    # scale the min and max values
     df_min = df_num.transform(lambda x: x - x.min()).transform(lambda x: x/x.max())
-    df_quality = df_min.to_frame('Quality')
+    # where df_min is null and passed value is not NAN set quality = 0.5
+    null_calc = df_min.isnull()
+    score_exists = df_num.notnull()
+    m = null_calc & score_exists
+    df_quality = df_min.mask(m, 0.5).to_frame('Quality')
     return df_quality
