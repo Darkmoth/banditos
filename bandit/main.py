@@ -29,7 +29,8 @@ def get_load_factor(cnt):
     return 1 - load_factor
 
 def reduce(df, col):
-    df['age'] = df.index.max() - df.index
+    df['age'] = df.index
+    df['age'] = df['age'].max() - df['age']
     g = df.sort_values('age', ascending=False).groupby(col)
     df['age_rank'] = g['age'].rank(method='min')
     df_newest = df[df.age_rank == 1]
