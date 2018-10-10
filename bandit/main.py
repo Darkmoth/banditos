@@ -2,6 +2,32 @@ import pandas as pd
 import math
 
 
+def set_cohorts(source_df, score_col):
+    cohort_size = 3
+    cohort_size_2 = cohort_size ** 2
+    cohort_size_3 = cohort_size ** 3
+
+    # break out distinct scores
+    uniq_list = source_df[score_col].unique()
+    df = pd.DataFrame({score_col: uniq_list}).sort_values(score_col, ascending=True)
+    df = df.sort_values(score_col)
+    df = df.reset_index(drop=True)
+
+    if len(df) > cohort_size:
+        grp_size = len(df) / cohort_size
+        df["cohort1"] = df.index // grp_size
+
+    if len(df) > cohort_size_2:
+        grp_size = len(df) / cohort_size_2
+        df["cohort2"] = df.index // grp_size
+
+    if len(df) > cohort_size_3:
+        grp_size = len(df) / cohort_size_3
+        df["cohort3"] = df.index // grp_size
+
+    return df
+
+
 def get_simple_ucb(row, centercalc):
     div1 = 2 * math.log(row["total"]) / row["count"]
     ucb = math.sqrt(div1)

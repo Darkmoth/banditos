@@ -1,3 +1,3 @@
-call activate kaggle-zillow
+call activate BanditNotebooks
 
 jupyter notebook
