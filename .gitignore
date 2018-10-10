@@ -2,3 +2,4 @@
 /.mypy_cache
 *.xslx
 *.xlsx
+.ipynb_checkpoints/
