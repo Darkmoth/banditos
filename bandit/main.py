@@ -2,6 +2,27 @@ import pandas as pd
 import math
 
 
+def get_tuned_ucb(row, centercalc, spreadcalc):
+    cnt = max(row["count"], 1)
+    row_total = max(row["total"], 1)
+    div1 = 2 * math.log(row_total) / cnt
+    min1 = min(0.25, row[spreadcalc] + div1)
+    div2 = math.log(row_total) / cnt
+    ucb = math.sqrt(div2 * min1)
+    return ucb + row[centercalc]
+
+
+def df_bandit_class(df, classname):
+    dfgb = df.groupby([classname])
+    dfgb = dfgb["Quality"].agg(["count", "mean", "var"]).reset_index()
+    dfgb["total"] = dfgb["count"].sum()
+    dfgb["donext"] = dfgb.apply(
+        lambda x: get_tuned_ucb(x, "mean", "var"), axis=1
+    ).fillna(999)
+    foo = dfgb.sort_values("donext", ascending=False)
+    return foo
+
+
 def set_cohorts(source_df, score_col):
     cohort_size = 3
     cohort_size_2 = cohort_size ** 2
@@ -31,16 +52,6 @@ def set_cohorts(source_df, score_col):
 def get_simple_ucb(row, centercalc):
     div1 = 2 * math.log(row["total"]) / row["count"]
     ucb = math.sqrt(div1)
-    return ucb + row[centercalc]
-
-
-def get_tuned_ucb(row, centercalc, spreadcalc):
-    cnt = max(row["count"], 1)
-    row_total = max(row["total"], 1)
-    div1 = 2 * math.log(row_total) / cnt
-    min1 = min(0.25, row[spreadcalc] + div1)
-    div2 = math.log(row_total) / cnt
-    ucb = math.sqrt(div2 * min1)
     return ucb + row[centercalc]
 
 
